@@ -646,7 +646,8 @@ change_language() {
                           "it" "$(translate "Italian")" \
                           "pt" "$(translate "Portuguese")" \
                           "sk" "Slovenčina" \
-                          "sv" "Svenska" 3>&1 1>&2 2>&3)
+                          "sv" "Svenska" \
+                          "zh-CN" "简体中文" 3>&1 1>&2 2>&3)
     
     if [ -z "$new_language" ]; then
         dialog --clear --backtitle "$BACKTITLE" \
