@@ -9,6 +9,7 @@ import itMessages from "../../messages/it/common.json"
 import ptMessages from "../../messages/pt/common.json"
 import skMessages from "../../messages/sk/common.json"
 import svMessages from "../../messages/sv/common.json"
+import zhCNMessages from "../../messages/zh-CN/common.json"
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_STORAGE_KEY,
@@ -30,6 +31,7 @@ const MESSAGE_CATALOG: Record<LanguageCode, MessageTree> = {
   pt: ptMessages as MessageTree,
   sk: skMessages as MessageTree,
   sv: svMessages as MessageTree,
+  "zh-CN": zhCNMessages as MessageTree,
 }
 
 interface I18nContextValue {
