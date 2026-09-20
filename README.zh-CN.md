@@ -4,7 +4,7 @@
 
 ## 包含内容
 
-- CLI/TUI：`lang/zh-CN.json`，覆盖所有已通过 `translate()` 接入的静态用户可见文本。
+- CLI/TUI：`lang/zh-CN.json`，提供主菜单、VM/LXC、存储、网络、PCI/GPU/IOMMU/SR-IOV、备份恢复、监控、通知、设置和确认/错误提示等核心中文条目；其余已接入 `translate()` 的字符串安全回退为英语原文。
 - 安装器：标准安装器、Beta 安装器和运行时“Change Language”菜单均加入 `zh-CN / 简体中文`。
 - Monitor WebUI：`AppImage/messages/zh-CN/common.json`、类型化语言注册、消息目录注册以及浏览器 `zh-CN` / `zh-Hans` / `zh` 自动识别。
 - 回退：CLI 缺失项维持英语原文；Monitor 按 `zh-CN → en → key` 回退。语言包不在用户主机运行时联网翻译。
@@ -33,7 +33,7 @@ git diff --check
 
 ## 已知限制与未覆盖项
 
-完整英语回退/通用术语清单由 `tools/validate_zh_cn.py` 生成至 `reports/zh-CN-english-fallback.md`。其中包含协议名、产品名、路径、单位、命令和部分上游硬编码文本，不能简单等同于漏译。
+语言键缺失清单、英语回退/通用术语清单由 `tools/validate_zh_cn.py` 生成至 `reports/zh-CN-validation.json` 和 `reports/zh-CN-english-fallback.md`。缺失项将安全显示英语原文；其中包含协议名、产品名、路径、单位、命令和部分上游硬编码文本，不能简单等同于漏译。
 
 少量上游 shell 脚本仍直接调用 `dialog` / `whiptail` 或直接 `echo` 文本，未经过 `translate()`。为保持此本地化提交小且可上游合并，本提交未将其批量重构；建议上游后续把这些字符串逐步接入现有 `translate()` 包装器。静态扫描结果和具体文件范围见 `reports/zh-CN-uncovered-hardcoded-strings.md`。
 
