@@ -1,7 +1,7 @@
 export const LANGUAGE_STORAGE_KEY = "proxmenux-ui-language"
 export const DEFAULT_LANGUAGE = "en"
 
-export type LanguageCode = "en" | "es" | "fr" | "de" | "it" | "pt" | "sk" | "sv"
+export type LanguageCode = "en" | "es" | "fr" | "de" | "it" | "pt" | "sk" | "sv" | "zh-CN"
 
 export type LanguageStatus = "complete" | "partial" | "needs-translation"
 
@@ -21,6 +21,7 @@ export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
   { code: "pt", englishName: "Portuguese", nativeName: "Português", status: "complete" },
   { code: "sk", englishName: "Slovak", nativeName: "Slovenčina", status: "complete" },
   { code: "sv", englishName: "Swedish", nativeName: "Svenska", status: "complete" },
+  { code: "zh-CN", englishName: "Chinese (Simplified)", nativeName: "简体中文", status: "complete" },
 ]
 
 export function isSupportedLanguage(value: string | null | undefined): value is LanguageCode {
@@ -32,7 +33,11 @@ export function detectBrowserLanguage(): LanguageCode {
 
   const candidates = [navigator.language, ...(navigator.languages || [])]
   for (const candidate of candidates) {
-    const code = candidate?.split("-")[0]?.toLowerCase()
+    const normalized = candidate?.toLowerCase()
+    if (normalized === "zh" || normalized?.startsWith("zh-cn") || normalized?.startsWith("zh-hans")) {
+      return "zh-CN"
+    }
+    const code = normalized?.split("-")[0]
     if (isSupportedLanguage(code)) return code
   }
 
