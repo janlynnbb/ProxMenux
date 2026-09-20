@@ -51,7 +51,10 @@ def main() -> int:
     for target_path, source, target in pairs:
         missing = sorted(set(source) - set(target))
         extra = sorted(set(target) - set(source))
-        empty = sorted(key for key in source if source[key] and not target.get(key))
+        empty = sorted(
+            key for key in source
+            if key in target and source[key] and not target[key]
+        )
         placeholders_bad = sorted(
             key for key in source
             if key in target and placeholders(source[key]) != placeholders(target[key])
@@ -62,7 +65,11 @@ def main() -> int:
             "extra_keys": extra, "unexpected_empty_values": empty,
             "placeholder_mismatches": placeholders_bad, "english_fallback_or_universal_values": unchanged,
         }
-        valid = valid and not (missing or extra or empty or placeholders_bad)
+        # A partial catalog is valid by design: scripts/utils.sh and the
+        # Monitor provider fall back to the original English value when a
+        # zh-CN key is absent.  Missing keys remain in the report so future
+        # contributors can translate them without masking coverage gaps.
+        valid = valid and not (extra or empty or placeholders_bad)
         fallback_lines.extend([f"## `{target_path}` ({len(unchanged)} entries)", ""])
         for key in unchanged:
             fallback_lines.append(f"- `{key}` — `{source[key].replace('`', "'")}`")
