@@ -60,7 +60,10 @@ MONITOR_SERVICE_FILE="/etc/systemd/system/proxmenux-monitor.service"
 MONITOR_PORT=8008
 
 # Offline installer envs
-REPO_URL="https://github.com/MacRimi/ProxMenux.git"
+# Optional source override for forks and localized branches. The defaults
+# preserve the upstream installer; callers can pin a branch without editing it.
+REPO_URL="${PROXMENUX_REPO_URL:-https://github.com/MacRimi/ProxMenux.git}"
+REPO_BRANCH="${PROXMENUX_REPO_BRANCH:-}"
 TEMP_DIR="/tmp/proxmenux-install-$$"
 
 # Load utility functions
@@ -768,8 +771,10 @@ install_normal_version() {
 
     show_progress $current_step $total_steps "Install ProxMenux repository"
     msg_info "Cloning ProxMenux repository."
-    if ! git clone --depth 1 "$REPO_URL" "$TEMP_DIR" 2>/dev/null; then
-        msg_error "Failed to clone repository from $REPO_URL"
+    local -a clone_args=(--depth 1)
+    [[ -n "$REPO_BRANCH" ]] && clone_args+=(--branch "$REPO_BRANCH")
+    if ! git clone "${clone_args[@]}" "$REPO_URL" "$TEMP_DIR" 2>/dev/null; then
+        msg_error "Failed to clone repository${REPO_BRANCH:+ branch '$REPO_BRANCH'} from $REPO_URL"
         exit 1
     fi
 
@@ -786,6 +791,20 @@ install_normal_version() {
     
     if [ ! -f "$CONFIG_FILE" ]; then
         echo '{}' > "$CONFIG_FILE"
+    fi
+
+    # Preserve an explicitly selected fork/branch for menu-driven updates.
+    if [[ -n "${PROXMENUX_REPO_URL:-}" && -n "$REPO_BRANCH" ]]; then
+        local config_tmp
+        config_tmp=$(mktemp)
+        if jq --arg repo "$REPO_URL" --arg branch "$REPO_BRANCH" \
+            '.installation_source = {repository: $repo, branch: $branch}' \
+            "$CONFIG_FILE" > "$config_tmp"; then
+            mv "$config_tmp" "$CONFIG_FILE"
+        else
+            rm -f "$config_tmp"
+            msg_warn "Could not persist the custom installation source; use the documented update command."
+        fi
     fi
     
     msg_ok "Directories and configuration created."
