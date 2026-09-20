@@ -31,9 +31,22 @@ VENV_PATH="/opt/googletrans-env"
 
 REPO_MAIN="https://raw.githubusercontent.com/MacRimi/ProxMenux/main"
 REPO_DEVELOP="https://raw.githubusercontent.com/MacRimi/ProxMenux/develop"
+CUSTOM_REPO_URL=""
+CUSTOM_REPO_BRANCH=""
 
 # ── Load utilities ─────────────────────────────────────────
 [[ -f "$UTILS_FILE" ]] && source "$UTILS_FILE"
+
+# A localized fork can persist its source during installation. Only convert a
+# normal github.com owner/repository URL; do not guess raw endpoints for others.
+if [[ -f "$CONFIG_FILE" ]]; then
+    CUSTOM_REPO_URL=$(jq -r '.installation_source.repository // empty' "$CONFIG_FILE" 2>/dev/null)
+    CUSTOM_REPO_BRANCH=$(jq -r '.installation_source.branch // empty' "$CONFIG_FILE" 2>/dev/null)
+    if [[ "$CUSTOM_REPO_URL" =~ ^https://github\.com/([^/]+)/([^/]+)(\.git)?$ && -n "$CUSTOM_REPO_BRANCH" ]]; then
+        custom_repo_name="${BASH_REMATCH[2]%.git}"
+        REPO_MAIN="https://raw.githubusercontent.com/${BASH_REMATCH[1]}/${custom_repo_name}/${CUSTOM_REPO_BRANCH}"
+    fi
+fi
 
 : "${LOCAL_SCRIPTS:=/usr/local/share/proxmenux/scripts}"
 
@@ -176,6 +189,8 @@ $(translate 'You can keep using ProxMenux from this terminal.')"
         if curl -fsSL "$INSTALL_URL" -o "$INSTALL_SCRIPT"; then
             chmod +x "$INSTALL_SCRIPT"
             # Replace this shell before the installer refreshes /usr/local/bin/menu.
+            PROXMENUX_REPO_URL="$CUSTOM_REPO_URL" \
+            PROXMENUX_REPO_BRANCH="$CUSTOM_REPO_BRANCH" \
             exec bash "$INSTALL_SCRIPT" --update
         fi
     fi
