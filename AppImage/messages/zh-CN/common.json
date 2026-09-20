@@ -1187,7 +1187,17 @@
       "noTargets": "未选择目标",
       "selectAtLeastOne": "至少选择一个更新目标。",
       "deleteButton": "删除日程",
-      "deleteConfirm": "删除此容器的计划更新？保留应用默认值（备份+重新启动）。"
+      "deleteConfirm": "删除此容器的计划更新？保留应用默认值（备份+重新启动）。",
+      "rebootRequired": "A restart is required to complete the update.",
+      "rebootPackages": "Packages: {packages}",
+      "viewLog": "View log",
+      "logTitle": "Update log",
+      "logDescription": "Output from the latest scheduled update of {name} (LXC {vmid}).",
+      "logLoading": "Loading log…",
+      "logEmpty": "This run produced no output.",
+      "logFailed": "The update log could not be loaded.",
+      "logTruncated": "Only the end of the log is shown because it exceeds the display limit.",
+      "closeLog": "Close"
     },
     "cronChip": {
       "detected": "检测到主机 cron",
@@ -1532,7 +1542,8 @@
       "notifyUpstreamLabel": "当新的上游版本可用时通知我",
       "notifyUpstreamHelp": "将“app_update_available”发送到“设置”→“通知”中启用的通道。如果此应用程序无法在您的盒子上更新，请关闭。",
       "excludeFromBadgeLabel": "从 LXC 更新计数器中排除",
-      "excludeFromBadgeHelp": "请勿将此应用程序计入 LXC 列表卡上的聚合更新徽章中。当您有意固定到特定版本（跟踪器要求、兼容性冻结）时很有用。不影响应用程序选项卡自身的状态或出站通知。"
+      "excludeFromBadgeHelp": "请勿将此应用程序计入 LXC 列表卡上的聚合更新徽章中。当您有意固定到特定版本（跟踪器要求、兼容性冻结）时很有用。不影响应用程序选项卡自身的状态或出站通知。",
+      "upstreamErrorGithubRateLimit": "GitHub's request limit has been reached. Configure an optional token in Settings → GitHub API, or try again later."
     }
   },
   "settings": {
@@ -1921,7 +1932,8 @@
           "gemini": "提供免费套餐，具有良好的性价比。",
           "ollama": "使用 Ollama 服务器上的模型。完全本地化、私有且免费运行。",
           "openrouter": "通过一把 API 键即可访问 100 多个模型。"
-        }
+        },
+        "loadModelsFailed": "Failed to load models — check the API key or endpoint URL."
       },
       "telegramGuide": {
         "title": "Telegram 机器人设置指南",
@@ -2063,6 +2075,20 @@
       "reset": "恢复默认值",
       "hint": "拖动重新排序 · 触摸时，先长按",
       "customActive": "使用自定义导航顺序。"
+    },
+    "githubApi": {
+      "title": "GitHub API",
+      "description": "Optional authentication for the release and tag checks used by registered applications.",
+      "configure": "Configure",
+      "tokenLabel": "Personal access token",
+      "tokenPlaceholder": "github_pat_...",
+      "tokenHelp": "The token is stored encrypted. ProxMenux uses it only for read-only GitHub API requests and never displays it again.",
+      "configured": "Token configured",
+      "notConfigured": "Using GitHub's anonymous request quota",
+      "removeToken": "Remove token",
+      "loadFailed": "Could not load the GitHub API setting.",
+      "saveFailed": "Could not save the GitHub API token.",
+      "removeFailed": "Could not remove the GitHub API token."
     }
   },
   "login": {
@@ -3142,7 +3168,13 @@
       "appsDashboard": "新的顶级应用程序仪表板 - 节点上每个 Web 链接的单个启动器。 LXC 注册的应用程序和用户定义的自定义 Web 链接与类别徽章、搜索和返回访客模式的一键深层链接共享相同的网格。",
       "lxcAppsUpdates": "每个 LXC 模式内的应用程序选项卡都会注册已安装的应用程序、捕获网络链接并跟踪上游版本。重新设计的“更新”选项卡可通过一个按钮应用操作系统包和应用程序更新； Docker 引擎和每张图像跟踪遵循相同的 24 小时周期，并根据需要执行“立即检查”操作。",
       "multilingual": "Monitor 现在支持 8 种语言：英语、西班牙语、德语、法语、意大利语、葡萄牙语、瑞典语和斯洛伐克语。非常感谢 @vaso73 构建了 i18n 脚手架，使这一切成为可能。",
-      "nvidiaMultiGpu": "NVIDIA 驱动程序生命周期转移到每个 BDF 所有权，因此多 GPU 主机可以将一张卡传递给 VM，并保持另一张卡在主机或 LXC 中运行，再加上内核 + 分支 + GPU 感知版本选择器 (#298)。"
+      "nvidiaMultiGpu": "NVIDIA 驱动程序生命周期转移到每个 BDF 所有权，因此多 GPU 主机可以将一张卡传递给 VM，并保持另一张卡在主机或 LXC 中运行，再加上内核 + 分支 + GPU 感知版本选择器 (#298)。",
+      "aiCustomEndpoint": "AI Assistant custom OpenAI endpoint — LiteLLM, LM Studio, LocalAI, vLLM, OmniRoute and any self-hosted proxy on private IPs, loopback or Docker networks are recognised when loading the model catalogue. The dropdown surfaces the server's error (or the underlying network reason) directly under the Load button (#325, reported by @jorgeffonte).",
+      "secureGatewayArch": "Secure Gateway wizard — the Alpine template download, local template selection and pct create all match the host's real architecture, so x86_64 hosts receive amd64 containers and arm64 hosts receive arm64 containers (#324, reported by @N0X4DD0).",
+      "atomicNotifications": "Notification events reserve their deduplication fingerprint atomically before AI processing and channel delivery, so concurrent collectors, completion callbacks or parallel Monitor processes cannot send the same event twice. The reservation is released when no channel succeeds, preserving retries.",
+      "borgSshPort": "Borg remote target — the Add Borg destination dialog and the shell TUI accept a custom SSH port. BORG_RSH, the auto key install flow and the capacity probe all honour it. Fully backwards compatible with existing entries created without an explicit port (suggested by @songochain in discussion #236).",
+      "githubToken": "Settings → GitHub API accepts an optional personal access token for release and tag checks when the anonymous quota is exhausted. The token is encrypted at rest and never returned to the browser; the rate-limit error is translated in every Monitor language (suggested by @SystemIdleProcess in discussion #306).",
+      "replicationContext": "Native Proxmox replication failure notifications resolve the replication job ID, affected VM/LXC ID and guest name; the exact error block from Proxmox is preserved as the reason, and each replication job deduplicates independently (reported by Ale R.)."
     }
   },
   "network": {
@@ -3962,7 +3994,8 @@
       "vmsLxcs": "VMs/LXCs",
       "when": "当",
       "whenLabel": "当",
-      "zfsPools": "ZFS 池"
+      "zfsPools": "ZFS 池",
+      "sshPort": "SSH port"
     },
     "jobs": {
       "attachDescriptionAfter": "备份。",
