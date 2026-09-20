@@ -20,6 +20,18 @@ git apply proxmenux-v1.2.6-zh-CN.patch
 
 然后按官方文档运行安装器。安装菜单选择 `zh-CN / 简体中文`，已安装系统可在 `Settings → Change Language` 中切换。Monitor 会根据浏览器偏好自动选择简体中文，也可在 Monitor Settings 中手动选择。
 
+## 在线安装本分支
+
+在 **PVE 宿主机的 Shell 或 SSH** 中以 `root` 执行。该命令固定从本分支克隆代码，不会改写 GitHub 的 `main` 分支：
+
+```bash
+PROXMENUX_REPO_URL='https://github.com/janlynnbb/ProxMenux.git' \
+PROXMENUX_REPO_BRANCH='zh-cn-localization' \
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/janlynnbb/ProxMenux/zh-cn-localization/install_proxmenux.sh)"
+```
+
+完成后输入 `menu` 启动；安装器中选择 `zh-CN / 简体中文`。升级同一中文分支时，重复上面的命令即可。不要在安装后的菜单中切换到 Beta/Develop 发布通道，否则会回到上游渠道。
+
 ## 可重复验证
 
 ```bash
